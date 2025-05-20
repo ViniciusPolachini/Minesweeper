@@ -7,8 +7,8 @@ namespace Minesweeper.Models;
 internal class MineCell : ICell
 {
 
-    private string _cellText;
-    public string CellText {
+    private string? _cellText;
+    public string? CellText {
         get => _cellText;
         set 
         {
