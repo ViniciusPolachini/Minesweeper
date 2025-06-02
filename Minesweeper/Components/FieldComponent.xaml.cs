@@ -55,7 +55,7 @@ public partial class FieldComponent : ContentView
 		var cellType = ChooseCellType();
 
         var cell = cells[row, column];
-		cell.SetNeighbords(neighbords);
+		cell.SetNeighbors(neighbords);
 		var cellComponent = new CellComponent(cell);
         rowLayout.Children.Add(cellComponent);
 
@@ -96,7 +96,7 @@ public partial class FieldComponent : ContentView
 	{
 		var rowIsValid = i >= 0 && i < config.RowNumber;
 		var columnIsValid = j >= 0 && j < config.ColumnNumber;
-		var isNotCurrentCell = i != 0 || j != 0;
+		var isNotCurrentCell = i != row || j != column;
 
 
         return rowIsValid && columnIsValid && isNotCurrentCell;

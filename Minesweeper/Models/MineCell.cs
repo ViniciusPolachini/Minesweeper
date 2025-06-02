@@ -2,15 +2,30 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Colors = Minesweeper.Helpers.Colors;
 
 namespace Minesweeper.Models;
 internal class MineCell : ICell
 {
 
-    private string _cellText;
-    public string CellText {
-        get => _cellText;
+    private string? _cellColor;
+    public string? CellColor {
+        get => _cellColor;
         set 
+        {
+            if (_cellColor != value)
+            {
+                _cellColor = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private string? _cellText;
+    public string? CellText
+    {
+        get => _cellText;
+        set
         {
             if (_cellText != value)
             {
@@ -19,14 +34,16 @@ internal class MineCell : ICell
             }
         }
     }
+
     public ICommand CellInteractionCommand { get; set; }
     public event PropertyChangedEventHandler PropertyChanged;
-    private IEnumerable<ICell> neighbords;
+    private IEnumerable<ICell> neighbors;
 
     public MineCell()
     {
+        CellColor = Colors.UntouchedCell;
         CellText = "";
-        this.neighbords = [];
+        this.neighbors = [];
         CellInteractionCommand = new Command(CellInteraction);
     }
 
@@ -34,11 +51,11 @@ internal class MineCell : ICell
     {
         LoseTheGame();
     }
-    public void SetNeighbords(IEnumerable<ICell> neighbords)
+    public void SetNeighbors(IEnumerable<ICell> neighbors)
     {
-        this.neighbords = neighbords;
+        this.neighbors = neighbors;
     }
-    public bool CheckIfAlreadyBeInteracted()
+    public bool CheckIfItHasNotBeenInteracted()
     {
         return string.IsNullOrEmpty(CellText);
     }
@@ -46,6 +63,7 @@ internal class MineCell : ICell
     private void LoseTheGame()
     {
         var page = Application.Current?.MainPage;
+        CellColor = Colors.TouchedCell;
         CellText = $"X";
         var decision = page.DisplayAlert("You lose!!", "Want to try again???", "Yes", "No");
     }

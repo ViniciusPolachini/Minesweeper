@@ -1,17 +1,25 @@
 ﻿using Minesweeper.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using Colors = Minesweeper.Helpers.Colors;
 
 namespace Minesweeper.Models;
 internal class SafeCell : ICell
 {
-
+    private string? _cellColor;
+    public string? CellColor
+    {
+        get => _cellColor;
+        set
+        {
+            if (_cellColor != value)
+            {
+                _cellColor = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     private string _cellText;
     public string CellText
     {
@@ -27,35 +35,41 @@ internal class SafeCell : ICell
     }
     public event PropertyChangedEventHandler PropertyChanged;
     public ICommand CellInteractionCommand { get; set; }
-    private IEnumerable<ICell> neighbords;
+    private IEnumerable<ICell> neighbors;
 
     public SafeCell()
     {
         CellText = "";
+        CellColor = Colors.UntouchedCell;
         CellInteractionCommand = new Command(CellInteraction);
-        this.neighbords = [];
+        this.neighbors = [];
     }
 
     public void CellInteraction()
     {
+        if (!CheckIfItHasNotBeenInteracted())
+            return;
 
-        var mines = neighbords.ToList().FindAll(cell => cell is MineCell);
+        var mines = neighbors.ToList().FindAll(cell => cell is MineCell);
 
-        CellText = $"{mines.Count}";
+        CellColor = Colors.TouchedCell;
+
+        if(mines.Count != 0)
+            CellText = $"{mines.Count}";
 
         if (mines.Count == 0)
-            foreach (var cell in neighbords)
-                if(cell.CheckIfAlreadyBeInteracted())
+            foreach (var cell in neighbors)
+                if (cell.CheckIfItHasNotBeenInteracted())
                     cell.CellInteraction();
     }
        
-    public void SetNeighbords(IEnumerable<ICell> neighbords)
+    public void SetNeighbors(IEnumerable<ICell> neighbors)
     {
-        this.neighbords = neighbords;
+        this.neighbors = neighbors;
     }
-    public bool CheckIfAlreadyBeInteracted()
+    public bool CheckIfItHasNotBeenInteracted()
     {
-        return string.IsNullOrEmpty(CellText);
+        return CellColor == Colors.UntouchedCell;
     }
     protected void OnPropertyChanged([CallerMemberName] string name = null)
     {

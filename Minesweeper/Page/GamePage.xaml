@@ -2,8 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Minesweeper.Page.GamePage"
-             xmlns:component="clr-namespace:Minesweeper.Components"
-             Title="GamePage">
+             xmlns:component="clr-namespace:Minesweeper.Components">
     <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
         <component:FieldComponent/>
     </VerticalStackLayout>
